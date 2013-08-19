@@ -22,13 +22,18 @@ const oclc = "oclc"
 // need to expand to support all the options
 
 func doSearch(searchType string, searchTerm string) (*Results, error) {
+
 	target := fmt.Sprintf(queryString, searchType, url.QueryEscape(searchTerm))
+
 	resp, err := http.Get(target)
 	if err != nil {
 		return nil, err
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	res := &Results{}
 	err = json.Unmarshal(data, &res)
