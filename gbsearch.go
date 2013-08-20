@@ -9,13 +9,18 @@ import (
 	"strconv"
 )
 
-const inTitle = "intitle"
-const inAuthor = "inauthor"
-const inPublisher = "inpublisher"
-const subject = "subject"
-const isbn = "isbn"
-const lccn = "lccn"
-const oclc = "oclc"
+type SearchType string
+
+const (
+	InTitle           SearchType = "intitle"
+	InAuthor          SearchType = "inauthor"
+	InPublisher       SearchType = "inpublisher"
+	Subject           SearchType = "subject"
+	ISBN              SearchType = "isbn"
+	LCCN              SearchType = "lccn"
+	OCLC              SearchType = "oclc"
+	UnknownSearchType SearchType = "unknown"
+)
 
 type FilterType byte
 type PrintType byte
@@ -23,7 +28,8 @@ type ProjectionType byte
 type OrderType byte
 
 const (
-	PartialText FilterType = iota
+	UnknownFilterType FilterType = iota
+	PartialText
 	FullText
 	FreeEbooks
 	PaidEbooks
@@ -47,7 +53,8 @@ func (this FilterType) String() string {
 }
 
 const (
-	All PrintType = iota
+	UnknownPrintType PrintType = iota
+	All
 	Books
 	Magazines
 )
@@ -65,7 +72,8 @@ func (this PrintType) String() string {
 }
 
 const (
-	FullResults ProjectionType = iota
+	UnknownProjectionType ProjectionType = iota
+	FullResults
 	Lite
 )
 
@@ -80,7 +88,8 @@ func (this ProjectionType) String() string {
 }
 
 const (
-	Relevance OrderType = iota
+	UnknownOrderByType OrderType = iota
+	Relevance
 	Newest
 )
 
@@ -114,37 +123,51 @@ func (this *Options) OnlyFindEPubDownloads(val bool) {
 }
 
 func (this *Options) SetFilter(ft FilterType) {
-	this.filter = &ft
+	if ft != UnknownFilterType {
+		this.filter = &ft
+	}
 }
 
 func (this *Options) SetStartIndex(si int) {
-	this.startIndex = &si
+	if si > 0 {
+		this.startIndex = &si
+	}
 }
 
 func (this *Options) SetMaxResults(mr int) {
-	this.maxResults = &mr
+	if mr > 0 {
+		this.maxResults = &mr
+	}
 }
 
 func (this *Options) SetPrintType(pt PrintType) {
-	this.printType = &pt
+	if pt != UnknownPrintType {
+		this.printType = &pt
+	}
 }
 
 func (this *Options) SetProjection(p ProjectionType) {
-	this.projection = &p
+	if p != UnknownProjectionType {
+		this.projection = &p
+	}
 }
 
 func (this *Options) SetOrderBy(o OrderType) {
-	this.orderBy = &o
+	if o != UnknownOrderByType {
+		this.orderBy = &o
+	}
 }
 
 func (this *Options) SetLanguageCode(lc string) {
-	this.languageCode = &lc
+	if lc != "" {
+		this.languageCode = &lc
+	}
 }
 
 // https://developers.google.com/books/docs/v1/using#PerformingSearch
 // need to expand to support all the options
 
-func doSearch(searchType string, searchTerm string, options *Options) (*Results, error) {
+func Search(searchType SearchType, searchTerm string, options *Options) (*Results, error) {
 
 	u := &url.URL{
 		Scheme: "https",
@@ -188,7 +211,11 @@ func doSearch(searchType string, searchTerm string, options *Options) (*Results,
 		}
 	}
 
-	query.Add("q", searchType+":"+url.QueryEscape(searchTerm))
+	if searchType != UnknownSearchType {
+		query.Add("q", string(searchType)+":"+searchTerm)
+	} else {
+		query.Add("q", searchTerm)
+	}
 
 	u.RawQuery = query.Encode()
 
@@ -217,29 +244,29 @@ func doSearch(searchType string, searchTerm string, options *Options) (*Results,
 }
 
 func TitleSearch(searchTerm string, options *Options) (*Results, error) {
-	return doSearch(inTitle, searchTerm, options)
+	return Search(InTitle, searchTerm, options)
 }
 
 func AuthorSearch(searchTerm string, options *Options) (*Results, error) {
-	return doSearch(inAuthor, searchTerm, options)
+	return Search(InAuthor, searchTerm, options)
 }
 
 func PublisherSearch(searchTerm string, options *Options) (*Results, error) {
-	return doSearch(inPublisher, searchTerm, options)
+	return Search(InPublisher, searchTerm, options)
 }
 
 func SubjectSearch(searchTerm string, options *Options) (*Results, error) {
-	return doSearch(subject, searchTerm, options)
+	return Search(Subject, searchTerm, options)
 }
 
 func ISBNSearch(searchTerm string, options *Options) (*Results, error) {
-	return doSearch(isbn, searchTerm, options)
+	return Search(ISBN, searchTerm, options)
 }
 
 func LCCNSearch(searchTerm string, options *Options) (*Results, error) {
-	return doSearch(lccn, searchTerm, options)
+	return Search(LCCN, searchTerm, options)
 }
 
 func OCLCSearch(searchTerm string, options *Options) (*Results, error) {
-	return doSearch(oclc, searchTerm, options)
+	return Search(OCLC, searchTerm, options)
 }
