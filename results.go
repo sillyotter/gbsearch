@@ -1,5 +1,6 @@
 package gbsearch
 
+// ImageLink will contain urls for various sized images of the book covers.
 type ImageLink struct {
 	SmallThumbnail string `json:"smallThumbnail"`
 	Thumbnail      string `json:"thumbnail"`
@@ -9,17 +10,20 @@ type ImageLink struct {
 	ExtraLarge     string `json:"extraLarge,omitempty"`
 }
 
+// IndustryIdentifiers will contain various id values, mostly ISBN numbers.
 type IndustryIdentifier struct {
 	Type       string `json:"type"`
 	Identifier string `json:"identifier"`
 }
 
+// Dimension will contain the size of physical items.
 type Dimension struct {
 	Height    string `json:height"`
 	Width     string `json:width"`
 	Thickness string `json:thickness"`
 }
 
+// VolumeInfo contains all the standard information about a particular volume.
 type VolumeInfo struct {
 	Title               string               `json:"title"`
 	Subtitle            string               `json:"subtitle"`
@@ -43,18 +47,21 @@ type VolumeInfo struct {
 	CanonicalVolumeLink string               `json:"canonicalVolumeLink"`
 }
 
+// Price contains pricing information.
 type Price struct {
 	Amount          float64 `json:"amount,omitempty"`
 	AmmountInMicros float64 `json:"amountInMicros,omitempty"`
 	CurrencyCode    string  `json:"currencyCode"`
 }
 
+// Offer contains information about offers.  I'm not really sure what this data is, FinksyOfferType makes no sense to me.
 type Offer struct {
 	FinskyOfferType int   `json:"finskyOfferType"`
 	ListPrice       Price `json:"listPrice"`
 	RetailPrice     Price `json:"retailPrice"`
 }
 
+// SaleInfo contains information about selling the book.
 type SaleInfo struct {
 	Country     string  `json:"country"`
 	Saleability string  `json:"saleability"`
@@ -65,11 +72,13 @@ type SaleInfo struct {
 	Offers      []Offer `json:"offers,omitempty"`
 }
 
+// Availablity contains information about the availability of various formats.
 type Availability struct {
 	IsAvailable  bool   `json:"isAvailable"`
 	ACSTokenLink string `json:"acsTokenLink,omitempty"`
 }
 
+// AccessInfo contains information about how the content can be consumed.
 type AccessInfo struct {
 	Country                string       `json:"country"`
 	Viewability            string       `json:"viewability"`
@@ -82,10 +91,12 @@ type AccessInfo struct {
 	AccessViewStatus       string       `json:"accessViewStatus"`
 }
 
+// SearchInfo contains a snippet about the text.
 type SearchInfo struct {
 	TextSnippet string `json:"textSnippet"`
 }
 
+// Item is a container that holds various volume, sales, and access information, along with some identifiers.
 type Item struct {
 	Kind       string     `json:"kind"`
 	Id         string     `json:"id"`
@@ -97,6 +108,9 @@ type Item struct {
 	SearchInfo SearchInfo `json:"searchInfo"`
 }
 
+// Result contains a collection of items returned by the search.  Items will contain by default 10 items, and at most 40.
+// The number of items may not match the TotalItems value.  Using the query Options StartIndex and MaxResults you can
+// page through the data.
 type Results struct {
 	Kind       string `json:"kind"`
 	TotalItems int    `json:"totalItems"`
