@@ -1,4 +1,4 @@
-// Package gbsearch provides a way to pragmatically search Google books api
+// Package gbsearch provides a way to search Google books API.
 package gbsearch
 
 import (
