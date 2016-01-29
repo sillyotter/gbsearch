@@ -76,6 +76,7 @@ type Options struct {
 	projection        *ProjectionType
 	orderBy           *OrderType
 	languageCode      *string
+	countryCode       *string
 }
 
 // DefaultOptions returns a new Options struct set with the default values.  Currently, the default
@@ -139,5 +140,13 @@ func (this *Options) SetOrderBy(o OrderType) {
 func (this *Options) SetLanguageCode(lc string) {
 	if lc != "" {
 		this.languageCode = &lc
+	}
+}
+
+// SetCountryCode will let us set which country IP to restrict our search to.  Use the two leter
+// standard country code, such as "us", "fr", etc...
+func (this *Options) SetCountryCode(cc string) {
+	if cc != "" {
+		this.countryCode = &cc
 	}
 }

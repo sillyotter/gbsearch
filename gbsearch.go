@@ -36,6 +36,10 @@ func Search(searchType SearchType, searchTerm string, options *Options) (*Result
 			query.Add("langRestrict", *options.languageCode)
 		}
 
+		if options.countryCode != nil {
+			query.Add("country", *options.countryCode)
+		}
+
 		if options.startIndex != nil {
 			query.Add("startIndex", strconv.Itoa(*options.startIndex))
 		}
